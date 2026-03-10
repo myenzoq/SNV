@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Webhook Sender</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; background-color: #f4f4f9; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { margin-top: 0; color: #333; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        textarea { height: 150px; resize: vertical; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #0056b3; }
+        #status { margin-top: 15px; font-size: 0.9rem; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Send Story Data</h2>
+    <form id="webhookForm">
+        <label for="chapter">Chapter Name</label>
+        <input type="text" id="chapter" placeholder="e.g. Chapter 1: The Beginning" required>
+
+        <label for="story">Story</label>
+        <textarea id="story" placeholder="Write your story here..." required></textarea>
+
+        <button type="submit" id="submitBtn">Send to Webhook</button>
+    </form>
+    <div id="status"></div>
+</div>
+
+<script>
+    const form = document.getElementById('webhookForm');
+    const statusDiv = document.getElementById('status');
+    const webhookUrl = 'https://e177-110-77-199-90.ngrok-free.app/webhook-test/2f6a8f26-90f2-49d0-82f2-96aca7163cfc';
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const data = {
+            chapter_name: document.getElementById('chapter').value,
+            story: document.getElementById('story').value,
+            timestamp: new Date().toISOString()
+        };
+
+        statusDiv.textContent = 'Sending...';
+        statusDiv.style.color = 'blue';
+
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+                mode: 'no-cors' // Use 'no-cors' if you face CORS issues with ngrok
+            });
+
+            statusDiv.textContent = 'Data sent successfully!';
+            statusDiv.style.color = 'green';
+            form.reset();
+        } catch (error) {
+            statusDiv.textContent = 'Error sending data. Check console.';
+            statusDiv.style.color = 'red';
+            console.error('Error:', error);
+        }
+    });
+</script>
+
+</body>
+</html>
