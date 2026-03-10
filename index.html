@@ -11,7 +11,84 @@
         label { display: block; margin-bottom: 5px; font-weight: bold; }
         input, textarea { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         textarea { height: 150px; resize: vertical; }
-        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button { width: 100%; padding: 12px; background-color: #007bff;<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Webhook Sender</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; padding: 40px 20px; background-color: #f0f2f5; }
+        .card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); width: 100%; max-width: 600px; }
+        h2 { margin-top: 0; color: #1c1e21; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; margin-top: 15px; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 14px; transition: border 0.2s; }
+        input:focus, textarea:focus { border-color: #007bff; outline: none; box-shadow: 0 0 0 2px rgba(0,123,255,0.1); }
+        textarea { height: 120px; resize: vertical; }
+        #ts_note { height: 80px; background-color: #fafafa; border-style: dashed; }
+        button { width: 100%; padding: 14px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 25px; }
+        button:hover { background-color: #218838; }
+        #status { margin-top: 20px; font-size: 0.95rem; text-align: center; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Story Dispatcher</h2>
+    <form id="webhookForm">
+        <label for="chapter">Chapter Name</label>
+        <input type="text" id="chapter" placeholder="e.g. Chapter 2: The Deep Woods" required>
+
+        <label for="story">Story Content</label>
+        <textarea id="story" placeholder="Once upon a time..." required></textarea>
+
+        <label for="ts_note">TS Note</label>
+        <textarea id="ts_note" placeholder="Add technical notes, character tags, or version info here..."></textarea>
+
+        <button type="submit" id="submitBtn">Send to Webhook</button>
+    </form>
+    <div id="status"></div>
+</div>
+
+<script>
+    const form = document.getElementById('webhookForm');
+    const statusDiv = document.getElementById('status');
+    const webhookUrl = 'https://e177-110-77-199-90.ngrok-free.app/webhook-test/2f6a8f26-90f2-49d0-82f2-96aca7163cfc';
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const data = {
+            chapter_name: document.getElementById('chapter').value,
+            story: document.getElementById('story').value,
+            ts_note: document.getElementById('ts_note').value,
+            sent_at: new Date().toLocaleString()
+        };
+
+        statusDiv.textContent = '⏳ Sending data...';
+        statusDiv.style.color = '#555';
+
+        try {
+            await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+                mode: 'no-cors' 
+            });
+
+            statusDiv.textContent = '✅ Success! Data sent to ngrok.';
+            statusDiv.style.color = 'green';
+            form.reset();
+        } catch (error) {
+            statusDiv.textContent = '❌ Error. Is your ngrok tunnel active?';
+            statusDiv.style.color = 'red';
+            console.error('Error:', error);
+        }
+    });
+</script>
+
+</body>
+</html> color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
         button:hover { background-color: #0056b3; }
         #status { margin-top: 15px; font-size: 0.9rem; text-align: center; }
     </style>
